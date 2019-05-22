@@ -1,0 +1,8 @@
+{
+  "name": "galich",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/sebafudi/galich.git",
+  "author": "Sebastian Fudalej <sebastianfudalej@gmail.com>",
+  "license": "MIT"
+}
