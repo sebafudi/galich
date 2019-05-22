@@ -4,5 +4,9 @@
   "main": "index.js",
   "repository": "https://github.com/sebafudi/galich.git",
   "author": "Sebastian Fudalej <sebastianfudalej@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "xlsx": "^0.14.3"
+  }
 }
