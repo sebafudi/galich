@@ -15,27 +15,49 @@ fs.readdir('data', (err, files) => {
     const sheetNameList = workbook.SheetNames;
     const odsData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNameList[0]]);
     let rows = [];
+    let sourceWeight = [];
     (async () => {
       odsData.forEach((odsRow, index) => {
         odsRow.lp = odsRow['L. p.'];
         if (typeof odsRow.lp !== 'undefined') {
-          // wikipediaOpenSearch('pl', 'Zapopan')
           wikipediaOpenSearch('pl', odsRow.miasto)
             .then(({ data }) => {
               data[2].forEach((articleDesc, indexCurrent) => {
-                // console.log(articleDesc);
-                if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film')) {
+                if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
                   count++;
-                  rows[index] = data[1][indexCurrent];
-                  console.log(rows[index]);
-                } else if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj) && !articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film')) {
+                  if (typeof sourceWeight[index] !== 'undefined') {
+                    if (sourceWeight[index] > 1) {
+                      rows[index] = data[1][indexCurrent];
+                      sourceWeight[index] = 1;
+                    }
+                  } else {
+                    count++;
+                    rows[index] = data[1][indexCurrent];
+                    sourceWeight[index] = 1;
+                  }
+                } else if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
+                  if (typeof sourceWeight[index] !== 'undefined') {
+                    if (sourceWeight[index] > 2) {
+                      rows[index] = data[1][indexCurrent];
+                      sourceWeight[index] = 2;
+                    }
+                  } else {
+                    count++;
+                    sourceWeight[index] = 2;
+                    rows[index] = data[1][indexCurrent];
+                  }
+                } else if (articleDesc.includes('miasto') && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
                   count++;
-                  rows[index] = data[1][indexCurrent];
-                  console.log(rows[index]);
-                } else if (articleDesc.includes('miasto') && !articleDesc.includes('film') && !articleDesc.includes(odsRow.ja1) && !articleDesc.includes(odsRow.kraj)) {
-                  count++;
-                  rows[index] = data[1][indexCurrent];
-                  console.log(rows[index]);
+                  if (typeof sourceWeight[index] !== 'undefined') {
+                    if (sourceWeight[index] > 3) {
+                      sourceWeight[index] = 3;
+                      rows[index] = data[1][indexCurrent];
+                    }
+                  } else {
+                    count++;
+                    sourceWeight[index] = 3;
+                    rows[index] = data[1][indexCurrent];
+                  }
                 }
               });
               responseCount++;
