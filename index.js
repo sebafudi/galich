@@ -3,7 +3,11 @@ const XLSX = require('xlsx');
 const fs = require('fs');
 const axiosRetry = require('axios-retry');
 
-axiosRetry(axios, { retries: 5 });
+const instance = axios.create({
+  timeout: 60000
+});
+
+axiosRetry(instance, { retries: 10 });
 
 const dataDirectory = './data';
 
@@ -33,24 +37,44 @@ fs.readdir('data', (err, files) => {
                     rows[index] = data[1][indexCurrent];
                     sourceWeight[index] = 1;
                   }
-                } else if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
+                } else if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj.substr(0, 4)) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 2) {
                       rows[index] = data[1][indexCurrent];
                       sourceWeight[index] = 2;
                     }
                   } else {
+                    rows[index] = data[2][indexCurrent];
                     sourceWeight[index] = 2;
+                  }
+                } else if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
+                  if (typeof sourceWeight[index] !== 'undefined') {
+                    if (sourceWeight[index] > 3) {
+                      rows[index] = data[1][indexCurrent];
+                      sourceWeight[index] = 3;
+                    }
+                  } else {
+                    sourceWeight[index] = 3;
+                    rows[index] = data[1][indexCurrent];
+                  }
+                } else if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj.substr(0, 4)) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
+                  if (typeof sourceWeight[index] !== 'undefined') {
+                    if (sourceWeight[index] > 4) {
+                      sourceWeight[index] = 4;
+                      rows[index] = data[1][indexCurrent];
+                    }
+                  } else {
+                    sourceWeight[index] = 4;
                     rows[index] = data[1][indexCurrent];
                   }
                 } else if (articleDesc.includes('miasto') && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
-                    if (sourceWeight[index] > 3) {
-                      sourceWeight[index] = 3;
+                    if (sourceWeight[index] > 5) {
+                      sourceWeight[index] = 5;
                       rows[index] = data[1][indexCurrent];
                     }
                   } else {
-                    sourceWeight[index] = 3;
+                    sourceWeight[index] = 5;
                     rows[index] = data[1][indexCurrent];
                   }
                 }
@@ -79,10 +103,10 @@ fs.readdir('data', (err, files) => {
 
 async function wikipediaOpenSearch(lang, query) {
   query = encodeURIComponent(query);
-  return axios.get(`https://${lang}.wikipedia.org/w/api.php?action=opensearch&search=${query}&format=json`);
+  return instance.get(`https://${lang}.wikipedia.org/w/api.php?action=opensearch&search=${query}&format=json`);
 }
 
 async function wikipediaParse(lang, query) {
   query = encodeURIComponent(query);
-  return axios.get(`https://${lang}.wikipedia.org/w/api.php?action=parse&page=${query}&format=json&prop=wikitext`);
+  return instance.get(`https://${lang}.wikipedia.org/w/api.php?action=parse&page=${query}&format=json&prop=wikitext`);
 }
