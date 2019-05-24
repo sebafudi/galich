@@ -3,7 +3,7 @@ const XLSX = require('xlsx');
 const fs = require('fs');
 const axiosRetry = require('axios-retry');
 
-axiosRetry(axios, { retries: 3 });
+axiosRetry(axios, { retries: 5 });
 
 const dataDirectory = './data';
 
@@ -16,22 +16,20 @@ fs.readdir('data', (err, files) => {
     const odsData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNameList[0]]);
     let rows = [];
     let sourceWeight = [];
-    (async () => {
-      odsData.forEach((odsRow, index) => {
-        odsRow.lp = odsRow['L. p.'];
-        if (typeof odsRow.lp !== 'undefined') {
-          wikipediaOpenSearch('pl', odsRow.miasto)
-            .then(({ data }) => {
+    odsData.forEach((odsRow, index) => {
+      odsRow.lp = odsRow['L. p.'];
+      if (typeof odsRow['L. p.'] !== 'undefined') {
+        wikipediaOpenSearch('pl', odsRow.miasto)
+          .then(({ data }) => {
+            if (data[1].length > 0) {
               data[2].forEach((articleDesc, indexCurrent) => {
                 if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
-                  count++;
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 1) {
                       rows[index] = data[1][indexCurrent];
                       sourceWeight[index] = 1;
                     }
                   } else {
-                    count++;
                     rows[index] = data[1][indexCurrent];
                     sourceWeight[index] = 1;
                   }
@@ -42,41 +40,40 @@ fs.readdir('data', (err, files) => {
                       sourceWeight[index] = 2;
                     }
                   } else {
-                    count++;
                     sourceWeight[index] = 2;
                     rows[index] = data[1][indexCurrent];
                   }
                 } else if (articleDesc.includes('miasto') && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
-                  count++;
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 3) {
                       sourceWeight[index] = 3;
                       rows[index] = data[1][indexCurrent];
                     }
                   } else {
-                    count++;
                     sourceWeight[index] = 3;
                     rows[index] = data[1][indexCurrent];
                   }
                 }
               });
-              responseCount++;
-              console.log(responseCount);
-              if (responseCount === 1200) {
-                let c = 0;
-                rows.forEach((element, i) => {
-                  console.log(i + 1 + ' - ' + odsData[i].miasto + ' - ' + element);
-                  c++;
-                });
-                console.log(c / 1200);
-              }
-            })
-            .catch((err) => {
-              console.log(err);
-            })
-        }
-      });
-    })();
+            } else {
+              console.log('article not found');
+            }
+            responseCount++;
+            console.log(responseCount);
+            if (typeof odsData[responseCount]  === 'undefined' || typeof odsData[responseCount]['L. p.'] === 'undefined') {
+              let c = 0;
+              rows.forEach((element, i) => {
+                console.log(i + 1 + ' - ' + odsData[i].miasto + ' - ' + element);
+                c++;
+              });
+              console.log(c / responseCount);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+      }
+    });
   });
 })
 
