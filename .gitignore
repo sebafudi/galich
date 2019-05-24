@@ -63,3 +63,5 @@ typings/
 data/
 
 *.ods
+
+*_data.txt
