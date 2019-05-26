@@ -3,6 +3,8 @@ const XLSX = require('xlsx');
 const fs = require('fs');
 const axiosRetry = require('axios-retry');
 
+const lpField = 'L. p.';
+
 const instance = axios.create({
   timeout: 60000
 });
@@ -22,24 +24,24 @@ fs.readdir('data', (err, files) => {
     let sourceWeight = [];
     let sourceLang = [];
     odsData.forEach((odsRow, index) => {
-      odsRow.lp = odsRow['L. p.'];
-      if (typeof odsRow['L. p.'] !== 'undefined') {
+      odsRow.lp = odsRow[lpField];
+      if (typeof odsRow[lpField] !== 'undefined') {
         wikipediaOpenSearch('pl', odsRow.miasto)
           .then(({ data }) => {
             if (data[1].length > 0) {
               sourceLang[index] = 'pl';
               data[2].forEach((articleDesc, indexCurrent) => {
-                if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
+                if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość')) && articleDesc.includes(odsRow.kraj) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 0) {
                       rows[index] = data[1][indexCurrent];
                       sourceWeight[index] = 0;
                     }
                   } else {
-                    rows[index] = data[1][indexCurrent];
+                    rows[index] = data[1][indexCurrent]; 
                     sourceWeight[index] = 0;
                   }
-                } else if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj.substr(0, 4)) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
+                } else if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 1) {
                       rows[index] = data[1][indexCurrent];
@@ -49,7 +51,7 @@ fs.readdir('data', (err, files) => {
                     rows[index] = data[1][indexCurrent];
                     sourceWeight[index] = 1;
                   }
-                } else if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ')) {
+                } else if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość')) && articleDesc.includes(odsRow.kraj) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 2) {
                       rows[index] = data[1][indexCurrent];
@@ -59,7 +61,7 @@ fs.readdir('data', (err, files) => {
                     sourceWeight[index] = 2;
                     rows[index] = data[1][indexCurrent];
                   }
-                } else if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj.substr(0, 4)) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ')) {
+                } else if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 3) {
                       sourceWeight[index] = 3;
@@ -69,7 +71,7 @@ fs.readdir('data', (err, files) => {
                     sourceWeight[index] = 3;
                     rows[index] = data[1][indexCurrent];
                   }
-                } else if (articleDesc.includes('miasto') && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ')) {
+                } else if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość')) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 4) {
                       sourceWeight[index] = 4;
@@ -189,7 +191,7 @@ const regEx = {
 }
 
 function checkIfAllRes(odsData, responseCount, rows, sourceWeight, sourceLang) {
-  if (typeof odsData[responseCount] === 'undefined' || typeof odsData[responseCount]['L. p.'] === 'undefined') {
+  if (typeof odsData[responseCount] === 'undefined' || typeof odsData[responseCount][lpField] === 'undefined') {
     let c = 0;
     let flag1 = [];
     let flag2 = [];
@@ -468,6 +470,7 @@ function formatBasic(txt) {
   txt = txt.replaceAll(',', '');
   txt = txt.replaceAll(' ', '');
   txt = txt.replaceAll('\\.', ',');
+  txt = txt.replaceAll(';', '');
   return txt;
 }
 
@@ -488,10 +491,10 @@ app.get('/', function (req, resp) {
   let errorsCount = 0;
   for (let i = 0; i <= 1200; i++) {
     if (typeof res[i] === 'undefined') {
-      str += ';;;;;;;<br />';
+      str += ';;;;;;;;<br />';
       errorsCount++;
     } else {
-    str += `${formatBasic(res[i].p)};${formatBasic(res[i].ll)};${formatBasic(res[i].lld)};${formatBasic(res[i].mnpm)};${formatBasic(res[i].dz)};${formatBasic(res[i].pm)};${res[i].zrodlo};${res[i].f1}<br />`;
+    str += `${formatBasic(res[i].p)};${formatBasic(res[i].ll)};${formatBasic(res[i].lld)};${formatBasic(res[i].mnpm)};${formatBasic(res[i].dz)};${formatBasic(res[i].pm)};${res[i].zrodlo};;${res[i].f1}<br />`;
     }
   }
   console.log(`GET - ERR: ${errorsCount}`);
