@@ -4,6 +4,7 @@ const fs = require('fs');
 const axiosRetry = require('axios-retry');
 
 const lpField = 'L. p.';
+const recordsCount = 500;
 
 const instance = axios.create({
   timeout: 60000
@@ -15,7 +16,6 @@ const dataDirectory = './data';
 
 fs.readdir('data', (err, files) => {
   files.forEach(fileElement => {
-    let count = 0;
     let responseCount = 0;
     const workbook = XLSX.readFile(dataDirectory + '/' + fileElement);
     const sheetNameList = workbook.SheetNames;
@@ -38,7 +38,7 @@ fs.readdir('data', (err, files) => {
                       sourceWeight[index] = 0;
                     }
                   } else {
-                    rows[index] = data[1][indexCurrent]; 
+                    rows[index] = data[1][indexCurrent];
                     sourceWeight[index] = 0;
                   }
                 } else if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
@@ -240,7 +240,7 @@ function checkIfAllRes(odsData, responseCount, rows, sourceWeight, sourceLang) {
           // console.log(i + '. ' + element + ': Liczba ludności: ' + (ll === natxt ? ll : formatPopulationCount(ll)) + ', Liczba ludności rok: ' + (lld === natxt ? lld : formatPopulationYear(lld)) + ', Powierzchnia: ' + p + ', Data założenia: ' + (pm == natxt ? dz : pm));
           xd = ';';
           // res[i] = [];
-          res[i] = { p, ll: (ll === natxt ? ll : formatPopulationCount(ll)), lld: (lld === natxt ? lld : formatPopulationYear(lld)), mnpm, dz, pm, zrodlo, f1: flag1[i]};
+          res[i] = { p, ll: (ll === natxt ? ll : formatPopulationCount(ll)), lld: (lld === natxt ? lld : formatPopulationYear(lld)), mnpm, dz, pm, zrodlo, f1: flag1[i] };
           // console.log(p + ll);
           // console.log(res[i].p !== '' && res[i].ll !== '');
           if (res[i].p === '' || res[i].ll === '' || res[i].lld === '' || res[i].mnpm === '' || res[i].dz === '' || res[i].pm === '' || res[i].zrodlo === '') {
@@ -452,7 +452,7 @@ function formatPopulationCount(txt) {
     txt = txt.replaceAll('tys', '');
     txt = txt.replaceAll(',', '.');
     txt = String(parseInt(txt * 1000));
-  } 
+  }
   txt = txt.replaceAll('&', '');
   txt = txt.replaceAll('n', '');
   txt = txt.replaceAll('b', '');
@@ -489,12 +489,12 @@ const port = 3000
 app.get('/', function (req, resp) {
   let str = '';
   let errorsCount = 0;
-  for (let i = 0; i <= 1200; i++) {
+  for (let i = 0; i <= recordsCount - 1; i++) {
     if (typeof res[i] === 'undefined') {
       str += ';;;;;;;;<br />';
       errorsCount++;
     } else {
-    str += `${formatBasic(res[i].p)};${formatBasic(res[i].ll)};${formatBasic(res[i].lld)};${formatBasic(res[i].mnpm)};${formatBasic(res[i].dz)};${formatBasic(res[i].pm)};${res[i].zrodlo};;${res[i].f1}<br />`;
+      str += `${formatBasic(res[i].p)};${formatBasic(res[i].ll)};${formatBasic(res[i].lld)};${formatBasic(res[i].mnpm)};${formatBasic(res[i].dz)};${formatBasic(res[i].pm)};${res[i].zrodlo};;${res[i].f1}<br />`;
     }
   }
   console.log(`GET - ERR: ${errorsCount}`);
