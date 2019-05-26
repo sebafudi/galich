@@ -31,6 +31,16 @@ fs.readdir('data', (err, files) => {
               data[2].forEach((articleDesc, indexCurrent) => {
                 if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
+                    if (sourceWeight[index] > 0) {
+                      rows[index] = data[1][indexCurrent];
+                      sourceWeight[index] = 0;
+                    }
+                  } else {
+                    rows[index] = data[1][indexCurrent];
+                    sourceWeight[index] = 0;
+                  }
+                } else if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj.substr(0, 4)) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
+                  if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 1) {
                       rows[index] = data[1][indexCurrent];
                       sourceWeight[index] = 1;
@@ -39,27 +49,27 @@ fs.readdir('data', (err, files) => {
                     rows[index] = data[1][indexCurrent];
                     sourceWeight[index] = 1;
                   }
-                } else if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj.substr(0, 4)) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
+                } else if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 2) {
                       rows[index] = data[1][indexCurrent];
                       sourceWeight[index] = 2;
                     }
                   } else {
-                    rows[index] = data[1][indexCurrent];
                     sourceWeight[index] = 2;
+                    rows[index] = data[1][indexCurrent];
                   }
-                } else if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ')) {
+                } else if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj.substr(0, 4)) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 3) {
-                      rows[index] = data[1][indexCurrent];
                       sourceWeight[index] = 3;
+                      rows[index] = data[1][indexCurrent];
                     }
                   } else {
                     sourceWeight[index] = 3;
                     rows[index] = data[1][indexCurrent];
                   }
-                } else if (articleDesc.includes('miasto') && articleDesc.includes(odsRow.kraj.substr(0, 4)) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ')) {
+                } else if (articleDesc.includes('miasto') && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 4) {
                       sourceWeight[index] = 4;
@@ -67,16 +77,6 @@ fs.readdir('data', (err, files) => {
                     }
                   } else {
                     sourceWeight[index] = 4;
-                    rows[index] = data[1][indexCurrent];
-                  }
-                } else if (articleDesc.includes('miasto') && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ')) {
-                  if (typeof sourceWeight[index] !== 'undefined') {
-                    if (sourceWeight[index] > 5) {
-                      sourceWeight[index] = 5;
-                      rows[index] = data[1][indexCurrent];
-                    }
-                  } else {
-                    sourceWeight[index] = 5;
                     rows[index] = data[1][indexCurrent];
                   }
                 }
@@ -91,6 +91,16 @@ fs.readdir('data', (err, files) => {
                     data[2].forEach((articleDesc, indexCurrent) => {
                       if ((articleDesc.includes('town') || articleDesc.includes('city')) && articleDesc.includes(odsRow.kraj) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book')) {
                         if (typeof sourceWeight[index] !== 'undefined') {
+                          if (sourceWeight[index] > 0) {
+                            rows[index] = data[1][indexCurrent];
+                            sourceWeight[index] = 0;
+                          }
+                        } else {
+                          rows[index] = data[1][indexCurrent];
+                          sourceWeight[index] = 0;
+                        }
+                      } else if ((articleDesc.includes('town') || articleDesc.includes('city')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book')) {
+                        if (typeof sourceWeight[index] !== 'undefined') {
                           if (sourceWeight[index] > 1) {
                             rows[index] = data[1][indexCurrent];
                             sourceWeight[index] = 1;
@@ -99,27 +109,27 @@ fs.readdir('data', (err, files) => {
                           rows[index] = data[1][indexCurrent];
                           sourceWeight[index] = 1;
                         }
-                      } else if ((articleDesc.includes('town') || articleDesc.includes('city')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book')) {
+                      } else if ((articleDesc.includes('town') || articleDesc.includes('city')) && articleDesc.includes(odsRow.kraj) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book')) {
                         if (typeof sourceWeight[index] !== 'undefined') {
                           if (sourceWeight[index] > 2) {
                             rows[index] = data[1][indexCurrent];
                             sourceWeight[index] = 2;
                           }
                         } else {
-                          rows[index] = data[1][indexCurrent];
                           sourceWeight[index] = 2;
+                          rows[index] = data[1][indexCurrent];
                         }
-                      } else if ((articleDesc.includes('town') || articleDesc.includes('city')) && articleDesc.includes(odsRow.kraj) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book')) {
+                      } else if ((articleDesc.includes('town') || articleDesc.includes('city')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book')) {
                         if (typeof sourceWeight[index] !== 'undefined') {
                           if (sourceWeight[index] > 3) {
-                            rows[index] = data[1][indexCurrent];
                             sourceWeight[index] = 3;
+                            rows[index] = data[1][indexCurrent];
                           }
                         } else {
                           sourceWeight[index] = 3;
                           rows[index] = data[1][indexCurrent];
                         }
-                      } else if ((articleDesc.includes('town') || articleDesc.includes('city')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book')) {
+                      } else if ((articleDesc.includes('town') || articleDesc.includes('city')) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book')) {
                         if (typeof sourceWeight[index] !== 'undefined') {
                           if (sourceWeight[index] > 4) {
                             sourceWeight[index] = 4;
@@ -127,16 +137,6 @@ fs.readdir('data', (err, files) => {
                           }
                         } else {
                           sourceWeight[index] = 4;
-                          rows[index] = data[1][indexCurrent];
-                        }
-                      } else if ((articleDesc.includes('town') || articleDesc.includes('city')) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book')) {
-                        if (typeof sourceWeight[index] !== 'undefined') {
-                          if (sourceWeight[index] > 5) {
-                            sourceWeight[index] = 5;
-                            rows[index] = data[1][indexCurrent];
-                          }
-                        } else {
-                          sourceWeight[index] = 5;
                           rows[index] = data[1][indexCurrent];
                         }
                       }
@@ -161,11 +161,87 @@ fs.readdir('data', (err, files) => {
   });
 })
 
+
+String.prototype.replaceAll = function (search, replacement) {
+  var target = this;
+  return target.replace(new RegExp(search, 'g'), replacement);
+};
+
+let res = [];
+
+const regEx = {
+  pl: {
+    ll: new RegExp('\\|liczba ludności\\s*= ([ok\\d\\s\\.\\,&nbsp;tys]*)'),
+    lld: new RegExp('\\|rok\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    p: new RegExp('\\|powierzchnia\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    pm: new RegExp('\\|prawa miejskie\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    dz: new RegExp('\\|data założenia\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    mnpm: new RegExp('\\|wysokość\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+  },
+  en: {
+    ll: new RegExp('\\|population_total\\s*= ([ok\\d\\s\\.\\,&nbsp;tys]*)'),
+    lld: new RegExp('\\|population_as_of\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    p: new RegExp('\\|area_total_km2\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    pm: new RegExp('\\|established_date3\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    dz: new RegExp('\\|established_date\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    mnpm: new RegExp('\\|elevation_m\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+  }
+}
+
+console.log(res.p);
 function checkIfAllRes(odsData, responseCount, rows, sourceWeight, sourceLang) {
   if (typeof odsData[responseCount] === 'undefined' || typeof odsData[responseCount]['L. p.'] === 'undefined') {
     let c = 0;
+    let flags = [];
+    /*
+
+      examples => '31', '10';
+      0 - 4 => sourceWeight
+      0 - 1 => name is not equal wikipedia tittle
+
+    */
     rows.forEach((element, i) => {
-      console.log(i + 1 + ' - ' + odsData[i].miasto + ' - ' + sourceLang[i] + ' - ' + element);
+      // console.log(i + 1 + ' - ' + odsData[i].miasto + ' - ' + sourceLang[i] + ' - ' + element);
+      flags[i] = String(sourceWeight[i]);
+      wikipediaParse(sourceLang[i], element)
+        .then(({ data }) => {
+          data.parse.wikitext = data.parse.wikitext['*'];
+          // console.log(data.parse.wikitext);
+          if (sourceLang[i] === 'pl') {
+            regExpLL = regEx.pl.ll;
+            regExpLLD = regEx.pl.lld;
+            regExpP = regEx.pl.p;
+            regExpPM = regEx.pl.pm;
+            regExpDZ = regEx.pl.dz;
+            regExpMNPM = regEx.pl.mnpm;
+          } else if (sourceLang[i] === 'en') {
+            regExpLL = regEx.en.ll;
+            regExpLLD = regEx.en.lld;
+            regExpP = regEx.en.p;
+            regExpPM = regEx.en.pm;
+            regExpDZ = regEx.en.dz;
+            regExpMNPM = regEx.en.mnpm;
+          }
+          let ll = regExpLL.exec(data.parse.wikitext);
+          let lld = regExpLLD.exec(data.parse.wikitext);
+          let p = regExpP.exec(data.parse.wikitext);
+          let pm = regExpPM.exec(data.parse.wikitext);
+          let dz = regExpDZ.exec(data.parse.wikitext);
+          let mnpm = regExpMNPM.exec(data.parse.wikitext);
+          const natxt = '';
+          ll = (ll === null || ll[1].trim() === '' ? natxt : ll[1].trim());
+          lld = (lld === null || lld[1].trim() === '' ? natxt : lld[1].trim());
+          p = (p === null || p[1].trim() === '' ? natxt : p[1].trim());
+          pm = (pm === null || pm[1].trim() === '' ? natxt : pm[1].trim());
+          dz = (dz === null || dz[1].trim() === '' ? natxt : dz[1].trim());
+          mnpm = (mnpm === null || mnpm[1].trim() === '' ? natxt : mnpm[1].trim());
+          zrodlo = `https://${sourceLang[i]}.wikipedia.org/wiki/${element.replaceAll(' ', '_')}`;
+          // console.log(i + '. ' + element + ': Liczba ludności: ' + (ll === natxt ? ll : formatPopulationCount(ll)) + ', Liczba ludności rok: ' + (lld === natxt ? lld : formatPopulationYear(lld)) + ', Powierzchnia: ' + p + ', Data założenia: ' + (pm == natxt ? dz : pm));
+          xd = ';';
+          res[i] = {p, ll: (ll === natxt ? ll : formatPopulationCount(ll)), llp: (lld === natxt ? lld : formatPopulationYear(lld)), mnpm, dz, pm, zrodlo};
+          console.log(res);
+          // res[i].p = p;
+        });
       c++;
     });
     console.log(c / responseCount);
@@ -180,4 +256,23 @@ function wikipediaOpenSearch(lang, query) {
 function wikipediaParse(lang, query) {
   query = encodeURIComponent(query);
   return instance.get(`https://${lang}.wikipedia.org/w/api.php?action=parse&page=${query}&format=json&prop=wikitext`);
+}
+
+function formatPopulationCount(txt) {
+  txt = txt.replaceAll('&nbsp;', '');
+  txt = txt.replaceAll(' ', '');
+  txt = txt.replaceAll('ok.', '');
+  txt = txt.replaceAll('ok', '');
+  txt = txt.replaceAll('\\.', '');
+  if (txt.includes('tys')) {
+    txt = txt.replaceAll('tys', '');
+    txt = txt.replaceAll(',', '.');
+    txt = parseInt(txt * 1000);
+  }
+  return txt;
+}
+
+function formatPopulationYear(txt) {
+  txt = (new RegExp('(\\d\\d\\d\\d)')).exec(txt);
+  return txt[0];
 }
