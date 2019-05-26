@@ -188,21 +188,20 @@ const regEx = {
   }
 }
 
-console.log(res.p);
 function checkIfAllRes(odsData, responseCount, rows, sourceWeight, sourceLang) {
   if (typeof odsData[responseCount] === 'undefined' || typeof odsData[responseCount]['L. p.'] === 'undefined') {
     let c = 0;
-    let flags = [];
+    let flag1 = [];
+    let flag2 = [];
     /*
 
-      examples => '31', '10';
-      0 - 4 => sourceWeight
-      0 - 1 => name is not equal wikipedia tittle
+      1: 0 - 4 => sourceWeight
+      2: 0 - 1 => name is not equal wikipedia tittle
 
     */
     rows.forEach((element, i) => {
       // console.log(i + 1 + ' - ' + odsData[i].miasto + ' - ' + sourceLang[i] + ' - ' + element);
-      flags[i] = String(sourceWeight[i]);
+      flag1[i] = String(sourceWeight[i]);
       wikipediaParse(sourceLang[i], element)
         .then(({ data }) => {
           data.parse.wikitext = data.parse.wikitext['*'];
@@ -238,8 +237,185 @@ function checkIfAllRes(odsData, responseCount, rows, sourceWeight, sourceLang) {
           zrodlo = `https://${sourceLang[i]}.wikipedia.org/wiki/${element.replaceAll(' ', '_')}`;
           // console.log(i + '. ' + element + ': Liczba ludności: ' + (ll === natxt ? ll : formatPopulationCount(ll)) + ', Liczba ludności rok: ' + (lld === natxt ? lld : formatPopulationYear(lld)) + ', Powierzchnia: ' + p + ', Data założenia: ' + (pm == natxt ? dz : pm));
           xd = ';';
-          res[i] = {p, ll: (ll === natxt ? ll : formatPopulationCount(ll)), llp: (lld === natxt ? lld : formatPopulationYear(lld)), mnpm, dz, pm, zrodlo};
-          console.log(res);
+          // res[i] = [];
+          res[i] = { p, ll: (ll === natxt ? ll : formatPopulationCount(ll)), lld: (lld === natxt ? lld : formatPopulationYear(lld)), mnpm, dz, pm, zrodlo, f1: flag1[i]};
+          // console.log(p + ll);
+          // console.log(res[i].p !== '' && res[i].ll !== '');
+          if (res[i].p === '' || res[i].ll === '' || res[i].lld === '' || res[i].mnpm === '' || res[i].dz === '' || res[i].pm === '' || res[i].zrodlo === '') {
+            // console.log(odsData[i]);
+            // console.log(res[i]);
+            if (sourceLang[i] === 'pl') {
+              res[i].addLang === 'en';
+              wikipediaLangLink('pl', element, 'en')
+                .then(({ data }) => {
+                  let pageId = Object.keys(data.query.pages)[0];
+                  if (typeof data.query.pages[pageId].langlinks !== 'undefined') {
+                    // console.log(data.query.pages[pageId].langlinks[0]['*']);
+                    // element = data.query.pages[pageId]
+                    let newLangName = data.query.pages[pageId].langlinks[0]['*'];
+                    wikipediaParse('en', newLangName)
+                      .then(({ data }) => {
+                        data.parse.wikitext = data.parse.wikitext['*'];
+                        regExpLL = regEx.en.ll;
+                        regExpLLD = regEx.en.lld;
+                        regExpP = regEx.en.p;
+                        regExpPM = regEx.en.pm;
+                        regExpDZ = regEx.en.dz;
+                        regExpMNPM = regEx.en.mnpm;
+                        let ll = regExpLL.exec(data.parse.wikitext);
+                        let lld = regExpLLD.exec(data.parse.wikitext);
+                        let p = regExpP.exec(data.parse.wikitext);
+                        let pm = regExpPM.exec(data.parse.wikitext);
+                        let dz = regExpDZ.exec(data.parse.wikitext);
+                        let mnpm = regExpMNPM.exec(data.parse.wikitext);
+                        // res[i].ll = (typeof res[i].ll === '') ? ll : res[i].ll;
+                        llUsed = false;
+                        if (ll !== null) {
+                          if (ll[0].trim() !== '') {
+                            if (res[i].ll === '') {
+                              res[i].ll = ll[1].trim();
+                              llUsed = true;
+                            }
+                          }
+                        }
+                        lldUsed = false;
+                        if (lld !== null) {
+                          if (lld[0].trim() !== '') {
+                            if (res[i].lld === '') {
+                              res[i].lld = lld[1].trim();
+                              lldUsed = true;
+                            }
+                          }
+                        }
+                        pUsed = false;
+                        if (p !== null) {
+                          if (p[0].trim() !== '') {
+                            if (res[i].p === '') {
+                              res[i].p = p[1].trim();
+                              pUsed = true;
+                            }
+                          }
+                        }
+                        pmUsed = false;
+                        if (pm !== null) {
+                          if (pm[0].trim() !== '') {
+                            if (res[i].pm === '') {
+                              res[i].pm = pm[1].trim();
+                              pmUsed = true;
+                            }
+                          }
+                        }
+                        dzUsed = false;
+                        if (dz !== null) {
+                          if (dz[0].trim() !== '') {
+                            if (res[i].dz === '') {
+                              res[i].dz = dz[1].trim();
+                              dzUsed = true;
+                            }
+                          }
+                        }
+                        mnpmUsed = false;
+                        if (mnpm !== null) {
+                          if (mnpm[0].trim() !== '') {
+                            if (res[i].mnpm === '') {
+                              res[i].mnpm = mnpm[1].trim();
+                              mnpmUsed = true;
+                            }
+                          }
+                        }
+                        if (llUsed || lldUsed || pUsed || pmUsed || dzUsed || dzUsed || mnpmUsed) {
+                          res[i].zrodlo += `, https://en.wikipedia.org/wiki/${newLangName.replaceAll(' ', '_')}`;
+                        }
+                      });
+                  }
+                });
+            } else if (sourceLang[i] === 'en') {
+              res[i].addLang === 'pl';
+              wikipediaLangLink('en', element, 'pl')
+                .then(({ data }) => {
+                  let pageId = Object.keys(data.query.pages)[0];
+                  if (typeof data.query.pages[pageId].langlinks !== 'undefined') {
+                    // console.log(data.query.pages[pageId].langlinks[0]['*']);
+                    // element = data.query.pages[pageId]
+                    let newLangName = data.query.pages[pageId].langlinks[0]['*'];
+                    wikipediaParse('en', newLangName)
+                      .then(({ data }) => {
+                        data.parse.wikitext = data.parse.wikitext['*'];
+                        regExpLL = regEx.pl.ll;
+                        regExpLLD = regEx.pl.lld;
+                        regExpP = regEx.pl.p;
+                        regExpPM = regEx.pl.pm;
+                        regExpDZ = regEx.pl.dz;
+                        regExpMNPM = regEx.pl.mnpm;
+                        let ll = regExpLL.exec(data.parse.wikitext);
+                        let lld = regExpLLD.exec(data.parse.wikitext);
+                        let p = regExpP.exec(data.parse.wikitext);
+                        let pm = regExpPM.exec(data.parse.wikitext);
+                        let dz = regExpDZ.exec(data.parse.wikitext);
+                        let mnpm = regExpMNPM.exec(data.parse.wikitext);
+                        // res[i].ll = (typeof res[i].ll === '') ? ll : res[i].ll;
+                        llUsed = false;
+                        if (ll !== null) {
+                          if (ll[0].trim() !== '') {
+                            if (res[i].ll === '') {
+                              res[i].ll = formatPopulationCount(ll[1].trim());
+                              llUsed = true;
+                            }
+                          }
+                        }
+                        lldUsed = false;
+                        if (lld !== null) {
+                          if (lld[0].trim() !== '') {
+                            if (res[i].lld === '') {
+                              res[i].lld = formatPopulationYear(lld[1]);
+                              lldUsed = true;
+                            }
+                          }
+                        }
+                        pUsed = false;
+                        if (p !== null) {
+                          if (p[0].trim() !== '') {
+                            if (res[i].p === '') {
+                              res[i].p = p[1].trim();
+                              pUsed = true;
+                            }
+                          }
+                        }
+                        pmUsed = false;
+                        if (pm !== null) {
+                          if (pm[0].trim() !== '') {
+                            if (res[i].pm === '') {
+                              res[i].pm = pm[1].trim();
+                              pmUsed = true;
+                            }
+                          }
+                        }
+                        dzUsed = false;
+                        if (dz !== null) {
+                          if (dz[0].trim() !== '') {
+                            if (res[i].dz === '') {
+                              res[i].dz = dz[1].trim();
+                              dzUsed = true;
+                            }
+                          }
+                        }
+                        mnpmUsed = false;
+                        if (mnpm !== null) {
+                          if (mnpm[0].trim() !== '') {
+                            if (res[i].mnpm === '') {
+                              res[i].mnpm = mnpm[1].trim();
+                              mnpmUsed = true;
+                            }
+                          }
+                        }
+                        if (llUsed || lldUsed || pUsed || pmUsed || dzUsed || dzUsed || mnpmUsed) {
+                          res[i].zrodlo += `, https://pl.wikipedia.org/wiki/${newLangName.replaceAll(' ', '_')}`;
+                        }
+                      });
+                  }
+                });
+            }
+          }
           // res[i].p = p;
         });
       c++;
@@ -258,7 +434,13 @@ function wikipediaParse(lang, query) {
   return instance.get(`https://${lang}.wikipedia.org/w/api.php?action=parse&page=${query}&format=json&prop=wikitext`);
 }
 
+async function wikipediaLangLink(lang, query, newLang) {
+  query = encodeURIComponent(query);
+  return instance.get(`https://${lang}.wikipedia.org/w/api.php?action=query&format=json&prop=langlinks&titles=${query}&lllang=${newLang}`);
+}
+
 function formatPopulationCount(txt) {
+  txt = txt.trim();
   txt = txt.replaceAll('&nbsp;', '');
   txt = txt.replaceAll(' ', '');
   txt = txt.replaceAll('ok.', '');
@@ -267,12 +449,53 @@ function formatPopulationCount(txt) {
   if (txt.includes('tys')) {
     txt = txt.replaceAll('tys', '');
     txt = txt.replaceAll(',', '.');
-    txt = parseInt(txt * 1000);
-  }
+    txt = String(parseInt(txt * 1000));
+  } 
+  txt = txt.replaceAll('&', '');
+  txt = txt.replaceAll('n', '');
+  txt = txt.replaceAll('b', '');
+  txt = txt.replaceAll('s', '');
+  txt = txt.replaceAll('b', '');
+  return txt;
+}
+
+function formatBasic(txt) {
+  txt = txt.replaceAll('&', '');
+  txt = txt.replaceAll('n', '');
+  txt = txt.replaceAll('b', '');
+  txt = txt.replaceAll('s', '');
+  txt = txt.replaceAll('b', '');
+  txt = txt.replaceAll(',', '');
+  txt = txt.replaceAll(' ', '');
+  txt = txt.replaceAll('\\.', ',');
   return txt;
 }
 
 function formatPopulationYear(txt) {
+  txt = txt.trim();
   txt = (new RegExp('(\\d\\d\\d\\d)')).exec(txt);
   return txt[0];
 }
+
+
+const express = require('express')
+const app = express()
+const port = 3000
+
+
+app.get('/', function (req, resp) {
+  let str = '';
+  let errorsCount = 0;
+  for (let i = 0; i <= 1200; i++) {
+    if (typeof res[i] === 'undefined') {
+      str += ';;;;;;;<br />';
+      errorsCount++;
+    } else {
+    str += `${formatBasic(res[i].p)};${formatBasic(res[i].ll)};${formatBasic(res[i].lld)};${formatBasic(res[i].mnpm)};${formatBasic(res[i].dz)};${formatBasic(res[i].pm)};${res[i].zrodlo};${res[i].f1}<br />`;
+    }
+  }
+  console.log(`GET - ERR: ${errorsCount}`);
+  resp.send(str)
+})
+
+app.listen(port, () => console.log(`App listening on port ${port}!`))
