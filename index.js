@@ -31,7 +31,7 @@ fs.readdir('data', (err, files) => {
             if (data[1].length > 0) {
               sourceLang[index] = 'pl';
               data[2].forEach((articleDesc, indexCurrent) => {
-                if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość') || articleDesc.includes('osiedle') || articleDesc.includes('stolica') || articleDesc.includes('dyskryt')) && articleDesc.includes(odsRow.kraj) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
+                if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość') || articleDesc.includes('osiedle') || articleDesc.includes('stolica')) && articleDesc.includes(odsRow.kraj) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('zm.')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 0) {
                       rows[index] = data[1][indexCurrent];
@@ -41,7 +41,7 @@ fs.readdir('data', (err, files) => {
                     rows[index] = data[1][indexCurrent];
                     sourceWeight[index] = 0;
                   }
-                } else if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość') || articleDesc.includes('osiedle') || articleDesc.includes('stolica') || articleDesc.includes('dyskryt')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór')) {
+                } else if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość') || articleDesc.includes('osiedle') || articleDesc.includes('stolica')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('zm.')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 1) {
                       rows[index] = data[1][indexCurrent];
@@ -51,7 +51,7 @@ fs.readdir('data', (err, files) => {
                     rows[index] = data[1][indexCurrent];
                     sourceWeight[index] = 1;
                   }
-                } else if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość') || articleDesc.includes('osiedle') || articleDesc.includes('stolica') || articleDesc.includes('dyskryt')) && articleDesc.includes(odsRow.kraj) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ')) {
+                } else if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość') || articleDesc.includes('osiedle') || articleDesc.includes('stolica')) && articleDesc.includes(odsRow.kraj) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ') && !articleDesc.includes('zm.')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 2) {
                       rows[index] = data[1][indexCurrent];
@@ -61,7 +61,7 @@ fs.readdir('data', (err, files) => {
                     sourceWeight[index] = 2;
                     rows[index] = data[1][indexCurrent];
                   }
-                } else if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość') || articleDesc.includes('osiedle') || articleDesc.includes('stolica') || articleDesc.includes('dyskryt')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ')) {
+                } else if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość') || articleDesc.includes('osiedle') || articleDesc.includes('stolica')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ') && !articleDesc.includes('zm.')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 3) {
                       sourceWeight[index] = 3;
@@ -71,7 +71,7 @@ fs.readdir('data', (err, files) => {
                     sourceWeight[index] = 3;
                     rows[index] = data[1][indexCurrent];
                   }
-                } else if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość') || articleDesc.includes('osiedle') || articleDesc.includes('stolica') || articleDesc.includes('dyskryt')) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ')) {
+                } else if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość') || articleDesc.includes('osiedle') || articleDesc.includes('stolica')) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ') && !articleDesc.includes('zm.')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 4) {
                       sourceWeight[index] = 4;
@@ -91,7 +91,7 @@ fs.readdir('data', (err, files) => {
                   if (data[1].length > 0) {
                     sourceLang[index] = 'en';
                     data[2].forEach((articleDesc, indexCurrent) => {
-                      if ((articleDesc.includes('town') || articleDesc.includes('city') || articleDesc.includes('district')) && articleDesc.includes(odsRow.kraj) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book')) {
+                      if ((articleDesc.includes('town') || articleDesc.includes('city') || articleDesc.includes('village')) && articleDesc.includes(odsRow.kraj) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book') && !articleDesc.includes('died')) {
                         if (typeof sourceWeight[index] !== 'undefined') {
                           if (sourceWeight[index] > 0) {
                             rows[index] = data[1][indexCurrent];
@@ -101,7 +101,7 @@ fs.readdir('data', (err, files) => {
                           rows[index] = data[1][indexCurrent];
                           sourceWeight[index] = 0;
                         }
-                      } else if ((articleDesc.includes('town') || articleDesc.includes('city') || articleDesc.includes('district')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book')) {
+                      } else if ((articleDesc.includes('town') || articleDesc.includes('city') || articleDesc.includes('village')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book') && !articleDesc.includes('died')) {
                         if (typeof sourceWeight[index] !== 'undefined') {
                           if (sourceWeight[index] > 1) {
                             rows[index] = data[1][indexCurrent];
@@ -111,7 +111,7 @@ fs.readdir('data', (err, files) => {
                           rows[index] = data[1][indexCurrent];
                           sourceWeight[index] = 1;
                         }
-                      } else if ((articleDesc.includes('town') || articleDesc.includes('city') || articleDesc.includes('district')) && articleDesc.includes(odsRow.kraj) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book')) {
+                      } else if ((articleDesc.includes('town') || articleDesc.includes('city') || articleDesc.includes('village')) && articleDesc.includes(odsRow.kraj) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book') && !articleDesc.includes('died')) {
                         if (typeof sourceWeight[index] !== 'undefined') {
                           if (sourceWeight[index] > 2) {
                             rows[index] = data[1][indexCurrent];
@@ -121,7 +121,7 @@ fs.readdir('data', (err, files) => {
                           sourceWeight[index] = 2;
                           rows[index] = data[1][indexCurrent];
                         }
-                      } else if ((articleDesc.includes('town') || articleDesc.includes('city') || articleDesc.includes('district')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book')) {
+                      } else if ((articleDesc.includes('town') || articleDesc.includes('city') || articleDesc.includes('village')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book') && !articleDesc.includes('died')) {
                         if (typeof sourceWeight[index] !== 'undefined') {
                           if (sourceWeight[index] > 3) {
                             sourceWeight[index] = 3;
@@ -131,7 +131,7 @@ fs.readdir('data', (err, files) => {
                           sourceWeight[index] = 3;
                           rows[index] = data[1][indexCurrent];
                         }
-                      } else if ((articleDesc.includes('town') || articleDesc.includes('city') || articleDesc.includes('district')) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book')) {
+                      } else if ((articleDesc.includes('town') || articleDesc.includes('city') || articleDesc.includes('village')) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book') && !articleDesc.includes('died')) {
                         if (typeof sourceWeight[index] !== 'undefined') {
                           if (sourceWeight[index] > 4) {
                             sourceWeight[index] = 4;
@@ -174,6 +174,7 @@ let res = [];
 const regEx = {
   pl: {
     ll: new RegExp('\\|liczba ludności\\s*= ([ok\\d\\s\\.\\,&nbsp;tys]*)'),
+    ll2: new RegExp('\\|ludność\\s*= ([ok\\d\\s\\.\\,&nbsp;tys]*)'),
     lld: new RegExp('\\|rok\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
     p: new RegExp('\\|powierzchnia\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
     pm: new RegExp('\\|prawa miejskie\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
@@ -194,7 +195,6 @@ function checkIfAllRes(odsData, responseCount, rows, sourceWeight, sourceLang) {
   if (typeof odsData[responseCount] === 'undefined' || typeof odsData[responseCount][lpField] === 'undefined') {
     let c = 0;
     let flag1 = [];
-    let flag2 = [];
     /*
 
       1: 0 - 4 => sourceWeight
@@ -210,6 +210,7 @@ function checkIfAllRes(odsData, responseCount, rows, sourceWeight, sourceLang) {
           // console.log(data.parse.wikitext);
           if (sourceLang[i] === 'pl') {
             regExpLL = regEx.pl.ll;
+            regExpLL2 = regEx.pl.ll2;
             regExpLLD = regEx.pl.lld;
             regExpP = regEx.pl.p;
             regExpPM = regEx.pl.pm;
@@ -237,6 +238,12 @@ function checkIfAllRes(odsData, responseCount, rows, sourceWeight, sourceLang) {
           dz = (dz === null || dz[1].trim() === '' ? natxt : dz[1].trim());
           mnpm = (mnpm === null || mnpm[1].trim() === '' ? natxt : mnpm[1].trim());
           zrodlo = `https://${sourceLang[i]}.wikipedia.org/wiki/${element.replaceAll(' ', '_')}`;
+          if (sourceLang[i] === 'pl') {
+            let ll2 = regExpLL2.exec(data.parse.wikitext);
+            if (ll === natxt) {
+              ll = (ll2 === null || ll2[1].trim() === '' ? natxt : ll2[1].trim());
+            }
+          }
           // console.log(i + '. ' + element + ': Liczba ludności: ' + (ll === natxt ? ll : formatPopulationCount(ll)) + ', Liczba ludności rok: ' + (lld === natxt ? lld : formatPopulationYear(lld)) + ', Powierzchnia: ' + p + ', Data założenia: ' + (pm == natxt ? dz : pm));
           xd = ';';
           // res[i] = [];
