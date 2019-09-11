@@ -3,8 +3,8 @@ const XLSX = require('xlsx');
 const fs = require('fs');
 const axiosRetry = require('axios-retry');
 
-const lpField = 'L. p.';
-const recordsCount = 500;
+const lpField = 'id';
+const recordsCount = 950;
 
 const instance = axios.create({
   timeout: 60000
@@ -41,7 +41,7 @@ fs.readdir('data', (err, files) => {
                     rows[index] = data[1][indexCurrent];
                     sourceWeight[index] = 0;
                   }
-                } else if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość') || articleDesc.includes('osiedle') || articleDesc.includes('stolica')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('zm.')) {
+                } else if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość') || articleDesc.includes('osiedle') || articleDesc.includes('stolica')) && articleDesc.includes(odsRow.kraj.substr(0, 3)) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('zm.')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 1) {
                       rows[index] = data[1][indexCurrent];
@@ -61,7 +61,7 @@ fs.readdir('data', (err, files) => {
                     sourceWeight[index] = 2;
                     rows[index] = data[1][indexCurrent];
                   }
-                } else if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość') || articleDesc.includes('osiedle') || articleDesc.includes('stolica')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ') && !articleDesc.includes('zm.')) {
+                } else if ((articleDesc.includes('miasto') || articleDesc.includes('miejscowość') || articleDesc.includes('osiedle') || articleDesc.includes('stolica')) && articleDesc.includes(odsRow.kraj.substr(0, 3)) && !articleDesc.includes('film') && !articleDesc.includes('album') && !articleDesc.includes('utwór') && !articleDesc.includes('książ') && !articleDesc.includes('zm.')) {
                   if (typeof sourceWeight[index] !== 'undefined') {
                     if (sourceWeight[index] > 3) {
                       sourceWeight[index] = 3;
@@ -84,7 +84,7 @@ fs.readdir('data', (err, files) => {
                 }
               });
             } else {
-              console.log('article not found [pl] - ' + odsRow.miasto);
+              // console.log('article not found [pl] - ' + odsRow.miasto);
               responseCount--;
               wikipediaOpenSearch('en', odsRow.miasto)
                 .then(({ data }) => {
@@ -101,7 +101,7 @@ fs.readdir('data', (err, files) => {
                           rows[index] = data[1][indexCurrent];
                           sourceWeight[index] = 0;
                         }
-                      } else if ((articleDesc.includes('town') || articleDesc.includes('city') || articleDesc.includes('village')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book') && !articleDesc.includes('died')) {
+                      } else if ((articleDesc.includes('town') || articleDesc.includes('city') || articleDesc.includes('village')) && articleDesc.includes(odsRow.kraj.substr(0, 3)) && articleDesc.includes(odsRow.ja1) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book') && !articleDesc.includes('died')) {
                         if (typeof sourceWeight[index] !== 'undefined') {
                           if (sourceWeight[index] > 1) {
                             rows[index] = data[1][indexCurrent];
@@ -121,7 +121,7 @@ fs.readdir('data', (err, files) => {
                           sourceWeight[index] = 2;
                           rows[index] = data[1][indexCurrent];
                         }
-                      } else if ((articleDesc.includes('town') || articleDesc.includes('city') || articleDesc.includes('village')) && articleDesc.includes(odsRow.kraj.substr(0, 4)) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book') && !articleDesc.includes('died')) {
+                      } else if ((articleDesc.includes('town') || articleDesc.includes('city') || articleDesc.includes('village')) && articleDesc.includes(odsRow.kraj.substr(0, 3)) && !articleDesc.includes('movie') && !articleDesc.includes('album') && !articleDesc.includes('song') && !articleDesc.includes('book') && !articleDesc.includes('died')) {
                         if (typeof sourceWeight[index] !== 'undefined') {
                           if (sourceWeight[index] > 3) {
                             sourceWeight[index] = 3;
@@ -144,15 +144,15 @@ fs.readdir('data', (err, files) => {
                       }
                     });
                   } else {
-                    console.log('article not found [en] - ' + odsRow.miasto);
+                    // console.log('article not found [en] - ' + odsRow.miasto);
                   }
                   responseCount++;
-                  console.log(responseCount);
+                  // console.log(responseCount);
                   checkIfAllRes(odsData, responseCount, rows, sourceWeight, sourceLang);
                 });
             }
             responseCount++;
-            console.log(responseCount);
+            // console.log(responseCount);
             checkIfAllRes(odsData, responseCount, rows, sourceWeight, sourceLang);
           })
           .catch((err) => {
@@ -173,21 +173,21 @@ let res = [];
 
 const regEx = {
   pl: {
-    ll: new RegExp('\\|liczba ludności\\s*= ([ok\\d\\s\\.\\,&nbsp;tys]*)'),
-    ll2: new RegExp('\\|ludność\\s*= ([ok\\d\\s\\.\\,&nbsp;tys]*)'),
-    lld: new RegExp('\\|rok\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
-    p: new RegExp('\\|powierzchnia\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
-    pm: new RegExp('\\|prawa miejskie\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
-    dz: new RegExp('\\|data założenia\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
-    mnpm: new RegExp('\\|wysokość\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    ll: new RegExp('\\|\\s*liczba ludności\\s*= ([ok\\d\\s\\.\\,&nbsp;tys]*)'),
+    ll2: new RegExp('\\|\\s*ludność\\s*= ([ok\\d\\s\\.\\,&nbsp;tys]*)'),
+    lld: new RegExp('\\|\\s*rok\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    p: new RegExp('\\|\\s*powierzchnia\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    pm: new RegExp('\\|\\s*prawa miejskie\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    dz: new RegExp('\\|\\s*data założenia\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    mnpm: new RegExp('\\|\\s*wysokość\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
   },
   en: {
-    ll: new RegExp('\\|population_total\\s*= ([ok\\d\\s\\.\\,&nbsp;tys]*)'),
-    lld: new RegExp('\\|population_as_of\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
-    p: new RegExp('\\|area_total_km2\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
-    pm: new RegExp('\\|established_date3\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
-    dz: new RegExp('\\|established_date\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
-    mnpm: new RegExp('\\|elevation_m\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    ll: new RegExp('\\|\\s*population_total\\s*= ([ok\\d\\s\\.\\,&nbsp;tys]*)'),
+    lld: new RegExp('\\|\\s*population_as_of\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    p: new RegExp('\\|\\s*area_total_km2\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    pm: new RegExp('\\|\\s*established_date3\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    dz: new RegExp('\\|\\s*established_date\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
+    mnpm: new RegExp('\\|\\s*elevation_m\\s*= ([\\d\\s\\.\\,&nbsp;]*)'),
   }
 }
 
@@ -333,7 +333,7 @@ function checkIfAllRes(odsData, responseCount, rows, sourceWeight, sourceLang) {
                           }
                         }
                         if (llUsed || lldUsed || pUsed || pmUsed || dzUsed || dzUsed || mnpmUsed) {
-                          res[i].zrodlo += `, https://en.wikipedia.org/wiki/${newLangName.replaceAll(' ', '_')}`;
+                          // res[i].zrodlo += `, https://en.wikipedia.org/wiki/${newLangName.replaceAll(' ', '_')}`;
                         }
                       });
                   }
@@ -418,7 +418,7 @@ function checkIfAllRes(odsData, responseCount, rows, sourceWeight, sourceLang) {
                           }
                         }
                         if (llUsed || lldUsed || pUsed || pmUsed || dzUsed || dzUsed || mnpmUsed) {
-                          res[i].zrodlo += `, https://pl.wikipedia.org/wiki/${newLangName.replaceAll(' ', '_')}`;
+                          // res[i].zrodlo += `, https://pl.wikipedia.org/wiki/${newLangName.replaceAll(' ', '_')}`;
                         }
                       });
                   }
@@ -474,7 +474,6 @@ function formatBasic(txt) {
   txt = txt.replaceAll('b', '');
   txt = txt.replaceAll('s', '');
   txt = txt.replaceAll('b', '');
-  txt = txt.replaceAll(',', '');
   txt = txt.replaceAll(' ', '');
   txt = txt.replaceAll('\\.', ',');
   txt = txt.replaceAll(';', '');
